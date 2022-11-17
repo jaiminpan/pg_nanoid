@@ -1,7 +1,7 @@
 # pg_nanoid
 [![Lang](https://img.shields.io/badge/Language-C-green.svg)]()
 [![BSD](https://img.shields.io/badge/License-BSD-green.svg)]()
-[![Extension](https://img.shields.io/badge/PostgreSQL_10.x+-Extension-green.svg)]()
+[![Extension](https://img.shields.io/badge/PostgreSQL_10+-Extension-green.svg)]()
 
 pg_nanoid is a PostgreSQL extension of unique string ID generator for Postgres.
 
