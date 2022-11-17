@@ -26,10 +26,7 @@
 #include "utils/varlena.h"
 #endif
 
-#ifdef HAVE_STRONG_RANDOM
 bytea *gen_random_bytes(int len);
-#endif
-
 
 PG_MODULE_MAGIC;
 
@@ -59,7 +56,6 @@ const char DEFAULT_CHARSET[64] = "_-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefgh
 Datum
 pg_nanoid(PG_FUNCTION_ARGS)
 {
-#ifdef HAVE_STRONG_RANDOM
 	int		len;
 	text*	alphabet;
 	text*	res;
@@ -119,13 +115,8 @@ pg_nanoid(PG_FUNCTION_ARGS)
 			}
 		}
 	}
-
-#else
-	pg_attribute_noreturn();
-#endif
 }
 
-#ifdef HAVE_STRONG_RANDOM
 //  reference pgcrypto pg_random_bytes
 bytea *
 gen_random_bytes(int len)
@@ -146,4 +137,3 @@ gen_random_bytes(int len)
 
 	return res;
 }
-#endif
