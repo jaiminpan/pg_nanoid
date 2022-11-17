@@ -1,17 +1,21 @@
 # pg_nanoid
-[![Lang](https://img.shields.io/badge/Language-C%2FC%2B%2B-green.svg)]()
+[![Lang](https://img.shields.io/badge/Language-C-green.svg)]()
 [![BSD](https://img.shields.io/badge/License-BSD-green.svg)]()
 [![Extension](https://img.shields.io/badge/PostgreSQL_10.x+-Extension-green.svg)]()
 
 pg_nanoid is a PostgreSQL extension of unique string ID generator for Postgres.
 
-Written with only C without other dependency.
 
 _Inspired by the following parent project: [ai/nanoid](https://github.com/ai/nanoid)_
 
 
+- **Simple**. Written with only C without other dependency.
+- **Safe**. It uses hardware random generator. Can be used in clusters.
+- **Short IDs**. It uses a larger alphabet than UUID (A-Za-z0-9_-). So ID size was reduced from 36 to 21 symbols.
 
-## HOW TO USE & EXAMPLE
+
+
+## USE & EXAMPLE
 
 | Function                                         |
 | ------------------------------------------------ |
@@ -22,8 +26,7 @@ default alphabet: `_-0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvw
 
 
 
-
-#### General
+#### * General
 
 ```sh
 SELECT gen_nanoid();
@@ -69,13 +72,13 @@ test=# select gen_nanoid(6, 'pg_nanoid') from generate_series(1, 5);
 ## INSTALL
 
 
-#### 1. Downloads
+#### *. Downloads
 
 ```
 git clone https://github.com/jaiminpan/pg_nanoid
 ```
 
-#### 2. Compile
+#### *. Compile
 
 ```sh
 cd pg_nanoid
