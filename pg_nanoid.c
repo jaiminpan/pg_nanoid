@@ -28,13 +28,12 @@
 
 #ifdef HAVE_STRONG_RANDOM
 bytea *gen_random_bytes(int len);
-// extern bool pg_strong_random(void *buf, size_t len);
 #endif
 
 
 PG_MODULE_MAGIC;
 
-void        _PG_init(void);
+void _PG_init(void);
 
 
 /*
@@ -61,17 +60,17 @@ Datum
 pg_nanoid(PG_FUNCTION_ARGS)
 {
 #ifdef HAVE_STRONG_RANDOM
-	int len;
-	text * alphabet;
-	text* res;
-	int idx;
-	char	 *ptr;
-	int mask;
-	int bits;
-	int step;
+	int		len;
+	text*	alphabet;
+	text*	res;
+	int		idx;
+	char*	ptr;
+	int		mask;
+	int		bits;
+	int		step;
 
 	const char* charset = NULL;
-	int	charset_len = 0;
+	int charset_len = 0;
 
 	if (PG_NARGS() == 2)
 	{
@@ -83,8 +82,8 @@ pg_nanoid(PG_FUNCTION_ARGS)
 
 		if (charset_len < 1 || charset_len > 255)
 			ereport(ERROR,
-					(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
-					errmsg("alphabet must contain between 1 and 255 symbols")));
+				(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
+				 errmsg("alphabet must contain between 1 and 255 symbols")));
 
 	} else {
 		len = PG_GETARG_INT32(0);
@@ -93,33 +92,33 @@ pg_nanoid(PG_FUNCTION_ARGS)
 		mask = 63;
 	}
 
-		bits = (int) floor(log(1.0 * (charset_len - 1)) / log(1.0 * 2));
-		mask = (2 << bits) - 1;
-		step = (int) ceil(1.6 * mask * len / charset_len);
+	bits = (int) floor(log(1.0 * (charset_len - 1)) / log(1.0 * 2));
+	mask = (2 << bits) - 1;
+	step = (int) ceil(1.6 * mask * len / charset_len);
 
 	res = (text *) palloc(VARHDRSZ + len);
 	SET_VARSIZE(res, VARHDRSZ + len);
 	ptr =(char*) VARDATA(res);
 	idx = 0;
 
-		while(true) 
+	while(true) 
+	{
+		char* bytes = (char*) gen_random_bytes(step);
+
+		for (int i = 0; i < step; i++)
 		{
-			char* bytes = (char*) gen_random_bytes(step);
+			int pos = (int) (bytes[i] & mask);
 
-			for (int i = 0; i < step; i++)
-			{
-					int pos = (int) (bytes[i] & mask);
-
-					if (pos < charset_len) {
-						*ptr = charset[pos];
-						++ptr;
-						++idx;
-						if (idx >= len) {
-								PG_RETURN_POINTER(res); 
-						}
-					}
+			if (pos < charset_len) {
+				*ptr = charset[pos];
+				++ptr;
+				++idx;
+				if (idx >= len) {
+					PG_RETURN_POINTER(res); 
+				}
 			}
 		}
+	}
 
 #else
 	pg_attribute_noreturn();
@@ -134,17 +133,17 @@ gen_random_bytes(int len)
 	bytea	   *res;
 	if (len < 1 || len > 1024)
 		ereport(ERROR,
-				(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
-				 errmsg("Length not in range")));
+			(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
+			 errmsg("Length not in range")));
 
 	res = palloc(len);
 
 	/* generate result */
 	if (!pg_strong_random(res, len))
 		ereport(ERROR,
-					(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
-					errmsg("generate random error")));
+			(errcode(ERRCODE_EXTERNAL_ROUTINE_INVOCATION_EXCEPTION),
+			errmsg("generate random error")));
 
-  return res;
+	return res;
 }
 #endif
